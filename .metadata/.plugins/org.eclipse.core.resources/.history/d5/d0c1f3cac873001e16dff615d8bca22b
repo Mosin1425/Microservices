@@ -1,0 +1,14 @@
+package com.example.hotel.service.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.hotel.service.entities.Hotel;
+import com.example.hotel.service.repository.HotelRepository;
+
+public interface  HotelService {
+	Hotel create(Hotel hotel);
+	List<Hotel> getAll();
+	Hotel getById(String id);
+}

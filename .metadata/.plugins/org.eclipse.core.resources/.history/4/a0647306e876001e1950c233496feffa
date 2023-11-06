@@ -1,0 +1,5 @@
+package com.incture.user.service.entities;
+
+public class Rating {
+
+}

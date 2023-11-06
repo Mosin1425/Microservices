@@ -1,0 +1,59 @@
+package com.incture.user.service.serviceImpl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.incture.user.service.entities.Rating;
+import com.incture.user.service.entities.User;
+import com.incture.user.service.exceptions.ResourceNotFoundException;
+import com.incture.user.service.repositories.UserRepository;
+import com.incture.user.service.services.UserService;
+
+@Service
+public class UserServiceImpl implements UserService{
+
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	
+	@Override
+	public User saveUser(User user) {
+		String randomUserId = UUID.randomUUID().toString();
+		user.setUserId(randomUserId);
+		return userRepository.save(user);
+	}
+
+	@Override
+	public List<User> getAllUser() {
+		return userRepository.findAll();
+	}
+
+	@Override
+	public User getUserById(String id) {
+		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id : " + id));
+		// URL - http://localhost:8083/ratings/ratingByUserId/091919b0-8a44-4669-bae3-9b9790c2cdb1
+		@SuppressWarnings("unchecked")
+		ArrayList<Rating> ratings = restTemplate.getForObject("http://localhost:8083/ratings/ratingByUserId/091919b0-8a44-4669-bae3-9b9790c2cdb1", ArrayList.class);
+		logger.info("{} ",ratings);
+		user.setRatings(ratings);
+		return user;
+	}
+
+	@Override
+	public void deleteUser(String id) {
+		userRepository.deleteById(id);
+	}
+
+}
+
