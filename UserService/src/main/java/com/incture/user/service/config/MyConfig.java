@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class MyConfig {
 	@Bean
-	@LoadBalanced // Annotation to mark a RestTemplate or WebClient bean to be configured to use aLoadBalancerClient
+	@LoadBalanced // Annotation to mark a RestTemplate or WebClient bean to be configured to use a LoadBalancerClient
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
