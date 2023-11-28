@@ -2,7 +2,10 @@ package com.incture.user.service.serviceImpl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -39,9 +42,21 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public List<User> getAllUser() {
-		return userRepository.findAll();
+		List<User> users = userRepository.findAll();
+		
+		for(User user : users) {
+			Rating[] ratingsOfUser = restTemplate.getForObject("http://RATING-SERVICE:8083/ratings/ratingByUserId/" + user.getUserId(), Rating[].class);
+			List<Rating> ratings = Arrays.stream(ratingsOfUser).toList();
+			for(Rating rating : ratings) {
+				Hotel hotel = restTemplate.getForObject("http://HOTEL-SERVICE:8082/hotels/getById/" + rating.getHotelId(), Hotel.class);
+				rating.setHotel(hotel);
+			}
+			user.setRatings(ratings);
+		}
+		return users;
+		
 	}
-
+	
 	@Override
 	public User getUserById(String id) {
 		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id : " + id));
