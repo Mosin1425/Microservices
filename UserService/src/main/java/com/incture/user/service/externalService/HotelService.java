@@ -9,6 +9,6 @@ import com.incture.user.service.entities.Hotel;
 @FeignClient(name="HOTEL-SERVICE")
 public interface HotelService {
 	
-	@GetMapping("/hotels/{hotelId}")
+	@GetMapping("/hotels/getById/{hotelId}")
 	Hotel getHotel(@PathVariable String hotelId);
 }
